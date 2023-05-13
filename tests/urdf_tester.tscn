@@ -1,6 +1,0 @@
-[gd_scene load_steps=2 format=3 uid="uid://dsf8opq2nibp5"]
-
-[ext_resource type="Script" path="res://addons/lunco-urdf/tests/urdf_tester.gd" id="1_h7a2e"]
-
-[node name="urdf_tester" type="Node3D"]
-script = ExtResource("1_h7a2e")

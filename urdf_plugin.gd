@@ -1,3 +1,5 @@
+# Plugin setup
+
 @tool
 extends EditorPlugin
 
