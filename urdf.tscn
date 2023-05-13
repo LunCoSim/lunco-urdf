@@ -1,6 +1,0 @@
-[gd_scene load_steps=2 format=3 uid="uid://mooyvxd3mrcx"]
-
-[ext_resource type="Script" path="res://addons/lunco-urdf/urdf.gd" id="1_emng8"]
-
-[node name="URDF" type="Node3D"]
-script = ExtResource("1_emng8")
