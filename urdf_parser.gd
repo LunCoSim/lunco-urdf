@@ -107,6 +107,18 @@ func link(node: XMLNode, root: Node3D):
 					var radius = float(mesh_node.attributes["radius"])
 					
 					cylinder(mesh_node, link_node, length, radius)
+				"box":
+					print("box")
+					
+					var size_array = String(mesh_node.attributes["size"]).split(" ")
+					
+					var x = float(size_array[0])
+					var y = float(size_array[1])
+					var z = float(size_array[2])
+					
+					box(mesh_node, link_node, x, y, z)
+				_:
+					print("Unknown geometry: ", mesh_node.name)
 				
 			
 	
@@ -188,8 +200,6 @@ func mesh(node, root):
 	mesh.owner = owner
 
 func cylinder(node, root, length, radius):
-
-		
 	var mesh_instance = MeshInstance3D.new()
 	
 	var mesh = CylinderMesh.new()
@@ -201,8 +211,23 @@ func cylinder(node, root, length, radius):
 	mesh_instance.mesh = mesh
 	
 	root.add_child(mesh_instance)
-	
 	mesh_instance.owner = owner
+
+func box(node, root, x, y, z):
+	
+	var mesh_instance = MeshInstance3D.new()
+	
+	var mesh = BoxMesh.new()
+	
+	mesh.size.x = x
+	mesh.size.y = y
+	mesh.size.z = z
+#					mesh.load
+	mesh_instance.mesh = mesh
+	
+	root.add_child(mesh_instance)
+	mesh_instance.owner = owner
+	
 	
 #------
 
