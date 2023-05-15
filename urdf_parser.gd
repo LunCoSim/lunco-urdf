@@ -115,7 +115,6 @@ func link(node: XMLNode, root: Node3D):
 			var y = float(xyz[1])
 			var z = float(xyz[2])
 			
-			
 			link_node.position = Vector3(x, y, z)
 	
 func joint(node: XMLNode, root: Node3D):
@@ -125,23 +124,36 @@ func joint(node: XMLNode, root: Node3D):
 	
 	var joint = Generic6DOFJoint3D.new()
 	
-	
-# origin, parent, child
-#
-#	joint.node_a = get_child_by_name(node, "")
-#	joint.node_b = get_child_by_name(root, "")
-#
 	match joint_type:
 		"prismatic":
 			pass
 		"revolute":
 			pass
 		"fixed":
-			pass
+			print("fixed joint")
+#			joint = HingeJoint3D.new()
+			
 		"floating":
 			pass
 		_:
 			print("Unknown joint type: ", joint_type)
+	
+	var parent = get_child_by_name(node, "parent")
+	var child = get_child_by_name(node, "child")
+	
+	var parent_name = parent.attributes["link"]
+	var child_name = child.attributes["link"]
+	
+#	joint.node_a = parent_name
+#	joint.node_b = child_name
+	
+#	print("asdasd: ", root.get_node(parent_name).get_path())
+##	joint.node_a = NodePath(parent_name)
+#	joint.node_a = root.get_node(parent_name).get_path()
+#	joint.node_b = root.get_node(child_name).get_path()
+
+	root.add_child(joint)
+	joint.owner = owner
 
 #--
 func inertial(node: XMLNode, root: Node3D):
@@ -209,8 +221,15 @@ func cylinder(node, root):
 #					mesh.load
 	mesh_instance.mesh = mesh
 	
+	var collision_shape = CollisionShape3D.new()
+	collision_shape.shape = mesh.create_convex_shape()
+	
+	root.add_child(collision_shape)
 	root.add_child(mesh_instance)
+	
+	collision_shape.owner = owner
 	mesh_instance.owner = owner
+	
 
 func box(node, root):
 	
@@ -231,7 +250,13 @@ func box(node, root):
 #					mesh.load
 	mesh_instance.mesh = mesh
 	
+	var collision_shape = CollisionShape3D.new()
+	collision_shape.shape = mesh.create_convex_shape()
+	
+	root.add_child(collision_shape)
 	root.add_child(mesh_instance)
+	
+	collision_shape.owner = owner
 	mesh_instance.owner = owner
 	
 	
