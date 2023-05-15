@@ -94,9 +94,20 @@ func link(node: XMLNode, root: Node3D):
 		var geometry_node = get_child_by_name(visual_node, "geometry")
 		
 		if geometry_node:
-			var mesh_node = get_child_by_name(geometry_node, "mesh")
-			if mesh_node:
-				mesh(mesh_node, link_node)
+			
+			var mesh_node :XMLNode = geometry_node.children[0]
+			
+			match mesh_node.name:
+				"mesh":
+					mesh(mesh_node, link_node)
+				"cylinder":
+					print("cylinder")
+					
+					var length = float(mesh_node.attributes["length"])
+					var radius = float(mesh_node.attributes["radius"])
+					
+					cylinder(mesh_node, link_node, length, radius)
+				
 			
 	
 func joint(node: XMLNode, root: Node3D):
@@ -155,7 +166,8 @@ func geometry():
 	pass
 
 
-		
+# ----------
+
 func mesh(node, root):
 	print("mesh")
 	var filename = node.attributes["filename"]
@@ -174,6 +186,23 @@ func mesh(node, root):
 #					mesh.load
 	root.add_child(mesh)
 	mesh.owner = owner
+
+func cylinder(node, root, length, radius):
+
+		
+	var mesh_instance = MeshInstance3D.new()
+	
+	var mesh = CylinderMesh.new()
+	
+	mesh.height = length
+	mesh.bottom_radius = radius
+	mesh.top_radius = radius
+#					mesh.load
+	mesh_instance.mesh = mesh
+	
+	root.add_child(mesh_instance)
+	
+	mesh_instance.owner = owner
 	
 #------
 
