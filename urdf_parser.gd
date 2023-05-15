@@ -144,8 +144,8 @@ func joint(node: XMLNode, root: Node3D):
 	var parent_name = parent.attributes["link"]
 	var child_name = child.attributes["link"]
 	
-#	joint.node_a = parent_name
-#	joint.node_b = child_name
+	joint.node_a = "../"+parent_name
+	joint.node_b = "../"+child_name
 	
 #	print("asdasd: ", root.get_node(parent_name).get_path())
 ##	joint.node_a = NodePath(parent_name)
