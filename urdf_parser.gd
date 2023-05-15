@@ -34,7 +34,7 @@ func pack(root):
 # --------------
 
 func create_link_node(link_data):
-	var link_node = Node3D.new()
+	var link_node = RigidBody3D.new()
 	link_node.name = link_data
 	# Set the link_node properties based on link_data
 	return link_node
@@ -52,7 +52,6 @@ func get_child_by_name(node: XMLNode, name: String, recursive:=false):
 				return child
 				
 func process_node(node, root):
-	
 	match node.name:
 		"robot":
 			return robot(node, root)
@@ -75,7 +74,6 @@ func robot(node: XMLNode, root: Node3D):
 	
 	for i in node.children:
 		process_node(i, root)
-#	root.name = parser.get_named_attribute_value("name")
 	
 func link(node: XMLNode, root: Node3D):
 	# Handle the link element
@@ -101,26 +99,24 @@ func link(node: XMLNode, root: Node3D):
 				"mesh":
 					mesh(mesh_node, link_node)
 				"cylinder":
-					print("cylinder")
-					
-					var length = float(mesh_node.attributes["length"])
-					var radius = float(mesh_node.attributes["radius"])
-					
-					cylinder(mesh_node, link_node, length, radius)
+					cylinder(mesh_node, link_node)
 				"box":
-					print("box")
-					
-					var size_array = String(mesh_node.attributes["size"]).split(" ")
-					
-					var x = float(size_array[0])
-					var y = float(size_array[1])
-					var z = float(size_array[2])
-					
-					box(mesh_node, link_node, x, y, z)
+					box(mesh_node, link_node)
 				_:
 					print("Unknown geometry: ", mesh_node.name)
-				
+					
+		var origin_node = get_child_by_name(visual_node, "origin")
+		
+		if origin_node:
+			var xyz = origin_node.attributes["xyz"].split(" ")
+			var rpy = origin_node.attributes["rpy"].split(" ")
 			
+			var x = float(xyz[0])
+			var y = float(xyz[1])
+			var z = float(xyz[2])
+			
+			
+			link_node.position = Vector3(x, y, z)
 	
 func joint(node: XMLNode, root: Node3D):
 	
@@ -199,11 +195,14 @@ func mesh(node, root):
 	root.add_child(mesh)
 	mesh.owner = owner
 
-func cylinder(node, root, length, radius):
+func cylinder(node, root):
 	var mesh_instance = MeshInstance3D.new()
 	
 	var mesh = CylinderMesh.new()
 	
+	var length = float(node.attributes["length"])
+	var radius = float(node.attributes["radius"])
+					
 	mesh.height = length
 	mesh.bottom_radius = radius
 	mesh.top_radius = radius
@@ -213,11 +212,18 @@ func cylinder(node, root, length, radius):
 	root.add_child(mesh_instance)
 	mesh_instance.owner = owner
 
-func box(node, root, x, y, z):
+func box(node, root):
 	
 	var mesh_instance = MeshInstance3D.new()
 	
 	var mesh = BoxMesh.new()
+	
+					
+	var size_array = String(node.attributes["size"]).split(" ")
+	
+	var x = float(size_array[0])
+	var y = float(size_array[1])
+	var z = float(size_array[2])
 	
 	mesh.size.x = x
 	mesh.size.y = y
