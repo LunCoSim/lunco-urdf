@@ -124,6 +124,17 @@ func joint(node: XMLNode, root: Node3D):
 	
 	var joint = Generic6DOFJoint3D.new()
 	
+	
+	var parent = get_child_by_name(node, "parent")
+	var child = get_child_by_name(node, "child")
+	
+	var parent_name = parent.attributes["link"]
+	var child_name = child.attributes["link"]
+	
+	var parent_node = root.get_node(parent_name)
+	var child_node = root.get_node(child_name)
+	
+	
 	match joint_type:
 		"prismatic":
 			pass
@@ -131,18 +142,18 @@ func joint(node: XMLNode, root: Node3D):
 			pass
 		"fixed":
 			print("fixed joint")
+			# Hack to move to parent from chiled CollisionShape3D due to limitations of Godot
+			# TBD: File proposal to add fixed Joint3D
 #			joint = HingeJoint3D.new()
-			
+			for chld in child_node.get_children():
+				if chld is CollisionShape3D:
+					chld.reparent(parent_node)
 		"floating":
 			pass
 		_:
 			print("Unknown joint type: ", joint_type)
 	
-	var parent = get_child_by_name(node, "parent")
-	var child = get_child_by_name(node, "child")
 	
-	var parent_name = parent.attributes["link"]
-	var child_name = child.attributes["link"]
 	
 	joint.node_a = "../"+parent_name
 	joint.node_b = "../"+child_name
