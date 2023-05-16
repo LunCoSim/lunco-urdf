@@ -6,6 +6,9 @@ extends Resource
 var source_path = ""
 var owner = null
 
+
+var materials = {}
+
 func parse(_source_path: String) -> Node3D:
 	source_path = _source_path
 	
@@ -63,6 +66,8 @@ func process_node(node, root):
 			return visual(node, root)
 		"mesh":
 			mesh(node, root)
+		"material":
+			material(node, root)
 		_:
 			print("Unknown XMLNode element: ", node.name)
 			
@@ -116,6 +121,13 @@ func link(node: XMLNode, root: Node3D):
 			var z = float(xyz[2])
 			
 			link_node.position = Vector3(x, y, z)
+			
+		var material_node = get_child_by_name(visual_node, "material")
+		
+		if material_node:
+			for chld in link_node.get_children():
+				if chld is MeshInstance3D:
+					chld.material_override = materials[material_node.name]
 	
 func joint(node: XMLNode, root: Node3D):
 	
@@ -272,7 +284,24 @@ func box(node, root):
 	
 	
 #------
+func material(node: XMLNode, root):
+	var mat = StandardMaterial3D.new()
+	
+	var color_node = get_child_by_name(node, "color")
+	
+	var color_rgba = color_node.attributes["rgba"].split(" ")
+	
+	var r = float(color_rgba[0])
+	var g = float(color_rgba[1])
+	var b = float(color_rgba[2])
+	var a = float(color_rgba[3])
+	
+	mat.albedo_color = Color(r, g, b, a)
+	
+	var name = node.name
+	materials[name] = mat
 
+#------
 func parent():
 	pass
 	
