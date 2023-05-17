@@ -6,6 +6,8 @@ extends Resource
 var source_path = ""
 var owner = null
 
+@export var correct_mesh_origin = true
+@export var aligh_z_axis = true
 
 var materials = {}
 
@@ -23,7 +25,21 @@ func parse(_source_path: String) -> Node3D:
 		return
 	
 	process_node(doc.root, root)
+	
+	if correct_mesh_origin:
+		for body in root.get_children():
+			if body is RigidBody3D:
+				for node in body.get_children():
+					if node is Node3D:
+						node.translate(-body.position)
+#						for mesh in node.get_children():
+#							if mesh is MeshInstance3D:
+#								mesh.translate(body.position)
+#								print("Translating: ", -body.position)
 
+	if aligh_z_axis:
+		root.rotate_x(PI/2)
+		
 	return root
 	
 
@@ -128,6 +144,7 @@ func link(node: XMLNode, root: Node3D):
 			for chld in link_node.get_children():
 				if chld is MeshInstance3D:
 					chld.material_override = materials[material_node.name]
+					print("Overrrided material : ", chld, " Material: ", chld.material_override)
 	
 func joint(node: XMLNode, root: Node3D):
 	
@@ -300,7 +317,8 @@ func material(node: XMLNode, root):
 	
 	var name = node.name
 	materials[name] = mat
-
+	
+	print("Material (**(*(*9))): ", mat)
 #------
 func parent():
 	pass

@@ -34,7 +34,7 @@ func _import(source: String, save_path: String, options: Dictionary, platform_va
 	
 	var res = ResourceSaver.save(packed_scene, p)
 	
-	print("URDF Saving:", res)
+	print("URDF Saving: ", res, " to ", p)
 	
 	var r = packed_scene.instantiate()
 	
